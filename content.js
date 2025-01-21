@@ -1,10 +1,5 @@
-/**
- * SubtitlePlayer - A class that manages the display and playback of SRT subtitles
- * in a Chrome extension environment. It creates an overlay for subtitles and
- * provides playback controls including play, pause, and seeking functionality.
- */
+// Main SubtitlePlayer class
 class SubtitlePlayer {
-  // Class fields - modern JavaScript approach
   subtitles = [];
   currentIndex = 0;
   isPlaying = false;
@@ -13,26 +8,16 @@ class SubtitlePlayer {
   currentTimeMs = 0;
   duration = 0;
   
-  // DOM elements that need class-wide access
   overlay = null;
   progressBar = null;
   timeDisplay = null;
   playPauseButton = null;
-  timerInterval = null;
   animationFrameId = null;
 
-  /**
-   * Initialize the SubtitlePlayer and set up message handling
-   * for Chrome extension communication.
-   */
   constructor() {
     this.setupMessageListener();
   }
 
-  /**
-   * Establishes a message listener for communication with the Chrome extension
-   * using async/await pattern for better error handling.
-   */
   setupMessageListener() {
     chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       try {
@@ -45,15 +30,10 @@ class SubtitlePlayer {
         console.error('Error handling message:', error);
         sendResponse({ success: false, error: error.message });
       }
-      return true; // Keeps message port open for async operations
+      return true;
     });
   }
 
-  /**
-   * Creates and initializes the DOM elements for the subtitle overlay and controls.
-   * Uses modern DOM manipulation methods and error handling.
-   * @returns {Promise<void>}
-   */
   async initializeOverlay() {
     if (!this.overlay) {
       try {
@@ -70,7 +50,7 @@ class SubtitlePlayer {
         const controlsContainer = document.createElement('div');
         controlsContainer.className = 'controls-container';
         
-        // Initialize progress bar container
+        // Initialize progress container
         const progressContainer = document.createElement('div');
         progressContainer.className = 'progress-container';
         
@@ -100,17 +80,26 @@ class SubtitlePlayer {
         const timeControlGroup = document.createElement('div');
         timeControlGroup.className = 'time-control-group';
         
-        // Initialize current time display
-        this.currentTimeElement = document.createElement('span');
-        this.currentTimeElement.className = 'current-time';
-        
-        // Initialize editable time display
+        // Initialize time display
         this.timeDisplay = document.createElement('input');
         Object.assign(this.timeDisplay, {
           type: 'text',
           className: 'time-display',
           readOnly: false,
-          placeholder: '00:00:00'
+          value: '00:00:00 / 00:00:00'
+        });
+        
+        // Add time display input handler
+        this.timeDisplay.addEventListener('change', (e) => {
+          const newTime = this.parseTimeInput(e.target.value);
+          if (newTime !== null && newTime >= 0 && newTime <= this.duration) {
+            this.currentTimeMs = newTime;
+            this.progressBar.value = this.currentTimeMs;
+            this.updateSubtitleDisplay();
+            this.updateTimeDisplay();
+          } else {
+            this.updateTimeDisplay(); // Reset to current time if invalid
+          }
         });
         
         // Initialize skip button
@@ -127,24 +116,17 @@ class SubtitlePlayer {
           }
         });
         
-        // Add time display input handler
-        this.timeDisplay.addEventListener('change', (e) => {
-          const newTime = this.parseTimeInput(e.target.value);
-          if (newTime !== null && newTime >= 0 && newTime <= this.duration) {
-            this.currentTimeMs = newTime;
-            this.progressBar.value = this.currentTimeMs;
-            this.updateSubtitleDisplay();
-            this.updateTimeDisplay();
-          } else {
-            this.updateTimeDisplay(); // Reset to current time if invalid
-          }
-        });
-        
         // Create reset button
         const resetButton = document.createElement('button');
         resetButton.className = 'subtitle-button';
         resetButton.textContent = 'Reset';
         resetButton.addEventListener('click', () => this.reset());
+        
+        // Assemble time control group
+        timeControlGroup.append(
+          this.timeDisplay,
+          skipButton
+        );
         
         // Assemble the controls
         progressContainer.append(this.progressBar);
@@ -164,21 +146,6 @@ class SubtitlePlayer {
     }
   }
 
-  parseTimeInput(timeStr) {
-    try {
-      const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-      if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) return null;
-      return (hours * 3600000 + minutes * 60000 + seconds * 1000);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  /**
-   * Parses SRT format subtitle content into structured data using modern string methods.
-   * @param {string} content - Raw SRT format subtitle content
-   * @returns {Array} Array of objects containing {start, end, text} for each subtitle
-   */
   parseSRT(content) {
     try {
       const blocks = content.trim().split('\n\n');
@@ -197,11 +164,6 @@ class SubtitlePlayer {
     }
   }
 
-  /**
-   * Converts SRT timestamp format (HH:MM:SS,mmm) to milliseconds
-   * @param {string} timeStr - Timestamp in SRT format
-   * @returns {number} Time in milliseconds
-   */
   timeToMs(timeStr) {
     try {
       const [time, ms] = timeStr.split(',');
@@ -213,11 +175,18 @@ class SubtitlePlayer {
     }
   }
 
-  /**
-   * Loads and processes subtitle content, initializing the player state
-   * @param {string} content - Raw SRT subtitle content to load
-   * @returns {Promise<void>}
-   */
+  parseTimeInput(timeStr) {
+    try {
+      // Handle input with or without total duration part
+      const timePart = timeStr.split('/')[0].trim();
+      const [hours, minutes, seconds] = timePart.split(':').map(Number);
+      if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) return null;
+      return (hours * 3600000 + minutes * 60000 + seconds * 1000);
+    } catch (error) {
+      return null;
+    }
+  }
+
   async loadSubtitles(content) {
     try {
       this.subtitles = this.parseSRT(content);
@@ -231,9 +200,6 @@ class SubtitlePlayer {
     }
   }
 
-  /**
-   * Toggles between play and pause states
-   */
   togglePlayPause() {
     if (this.isPlaying) {
       this.pause();
@@ -242,9 +208,6 @@ class SubtitlePlayer {
     }
   }
 
-  /**
-   * Starts or resumes subtitle playback using requestAnimationFrame for smoother updates
-   */
   play() {
     if (!this.subtitles.length) return;
     
@@ -254,9 +217,6 @@ class SubtitlePlayer {
     this.startTimer();
   }
 
-  /**
-   * Initializes the playback timer using requestAnimationFrame for better performance
-   */
   startTimer() {
     let lastTime = performance.now();
     
@@ -282,9 +242,6 @@ class SubtitlePlayer {
     this.animationFrameId = requestAnimationFrame(updateFrame);
   }
 
-  /**
-   * Pauses subtitle playback and cleans up animation frame
-   */
   pause() {
     this.isPlaying = false;
     this.playPauseButton.textContent = 'Play';
@@ -294,10 +251,6 @@ class SubtitlePlayer {
     }
   }
 
-  /**
-   * Resets the player to initial state
-   * Clears current subtitle, resets time to 0, and stops playback
-   */
   async reset() {
     this.currentTimeMs = 0;
     this.currentIndex = 0;
@@ -316,17 +269,6 @@ class SubtitlePlayer {
     ]);
   }
 
-  // Add new method to parse time input
-  parseTimeInput(timeStr) {
-    try {
-      const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-      if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) return null;
-      return (hours * 3600000 + minutes * 60000 + seconds * 1000);
-    } catch (error) {
-      return null;
-    }
-  }
-
   updateSubtitleDisplay() {
     try {
       const currentSub = this.subtitles.find(sub => 
@@ -340,10 +282,6 @@ class SubtitlePlayer {
     }
   }
 
-  /**
-   * Updates the time display showing current position and total duration
-   * Formats time as HH:MM:SS
-   */
   updateTimeDisplay() {
     try {
       const formatTime = (ms) => {
@@ -353,12 +291,15 @@ class SubtitlePlayer {
         return `${hours.toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
       };
       
-      this.timeDisplay.textContent = `${formatTime(this.currentTimeMs)} / ${formatTime(this.duration)}`;
+      // Only update the value if the input is not focused
+      if (document.activeElement !== this.timeDisplay) {
+        this.timeDisplay.value = `${formatTime(this.currentTimeMs)} / ${formatTime(this.duration)}`;
+      }
     } catch (error) {
       console.error('Error updating time display:', error);
     }
   }
 }
 
-// Create a single instance of SubtitlePlayer when the script loads
+// Create instance
 const subtitlePlayer = new SubtitlePlayer();
