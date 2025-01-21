@@ -96,12 +96,35 @@ class SubtitlePlayer {
           this.updateTimeDisplay();
         });
         
+        // Create time control group
+        const timeControlGroup = document.createElement('div');
+        timeControlGroup.className = 'time-control-group';
+        
+        // Initialize current time display
+        this.currentTimeElement = document.createElement('span');
+        this.currentTimeElement.className = 'current-time';
+        
         // Initialize editable time display
         this.timeDisplay = document.createElement('input');
         Object.assign(this.timeDisplay, {
           type: 'text',
           className: 'time-display',
-          readOnly: false
+          readOnly: false,
+          placeholder: '00:00:00'
+        });
+        
+        // Initialize skip button
+        const skipButton = document.createElement('button');
+        skipButton.className = 'skip-button';
+        skipButton.textContent = 'Skip';
+        skipButton.addEventListener('click', () => {
+          const newTime = this.parseTimeInput(this.timeDisplay.value);
+          if (newTime !== null && newTime >= 0 && newTime <= this.duration) {
+            this.currentTimeMs = newTime;
+            this.progressBar.value = this.currentTimeMs;
+            this.updateSubtitleDisplay();
+            this.updateTimeDisplay();
+          }
         });
         
         // Add time display input handler
@@ -128,7 +151,7 @@ class SubtitlePlayer {
         controlsContainer.append(
           this.playPauseButton,
           progressContainer,
-          this.timeDisplay,
+          timeControlGroup,
           resetButton
         );
         
@@ -138,6 +161,16 @@ class SubtitlePlayer {
         console.error('Error initializing overlay:', error);
         throw new Error('Failed to initialize subtitle overlay');
       }
+    }
+  }
+
+  parseTimeInput(timeStr) {
+    try {
+      const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+      if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) return null;
+      return (hours * 3600000 + minutes * 60000 + seconds * 1000);
+    } catch (error) {
+      return null;
     }
   }
 
@@ -161,16 +194,6 @@ class SubtitlePlayer {
     } catch (error) {
       console.error('Error parsing SRT:', error);
       throw new Error('Invalid SRT format');
-    }
-  }
-
-  parseTimeInput(timeStr) {
-    try {
-      const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-      if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) return null;
-      return (hours * 3600000 + minutes * 60000 + seconds * 1000);
-    } catch (error) {
-      return null;
     }
   }
 
