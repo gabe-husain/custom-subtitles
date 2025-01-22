@@ -1,19 +1,34 @@
+/**
+ * Class representing a single subtitle track with timing and display capabilities
+ */
 class SubtitleTrack {
-  subtitles = [];
-  currentTimeMs = 0;
-  duration = 0;
-  timeOffset = 0;
+  subtitles = [];          // Array to store parsed subtitle entries
+  currentTimeMs = 0;       // Current playback position in milliseconds
+  duration = 0;            // Total duration of subtitle track
+  timeOffset = 0;          // Offset to adjust timing of subtitles
 
+  /**
+   * Creates a new subtitle track
+   * @param {string} color - Color to display subtitles in (default: white)
+   */
   constructor(color = 'white') {
     this.color = color;
   }
 
+  /**
+   * Loads and parses SRT content into subtitle track
+   * @param {string} content - Raw SRT file content
+   */
   loadSubtitles(content) {
     this.subtitles = this.parseSRT(content);
     this.duration = this.subtitles[this.subtitles.length - 1]?.end ?? 0;
     this.currentTimeMs = 0;
   }
 
+  /**
+   * Gets the current subtitle based on playback position
+   * @returns {Object|undefined} Current subtitle entry or undefined if none active
+   */
   getCurrentSubtitle() {
     const adjustedTime = this.currentTimeMs + this.timeOffset;
     return this.subtitles.find(sub => 
@@ -21,6 +36,11 @@ class SubtitleTrack {
     );
   }
 
+  /**
+   * Parses SRT format content into structured subtitle data
+   * @param {string} content - Raw SRT content
+   * @returns {Array} Array of parsed subtitle objects
+   */
   parseSRT(content) {
     const blocks = content.trim().split(/\r?\n\r?\n+/);
     return blocks.map(block => {
@@ -35,6 +55,11 @@ class SubtitleTrack {
     });
   }
 
+  /**
+   * Converts SRT timestamp to milliseconds
+   * @param {string} timeStr - SRT format timestamp (00:00:00,000)
+   * @returns {number} Milliseconds
+   */
   timeToMs(timeStr) {
     const [time, ms] = timeStr.split(',');
     const [hours, minutes, seconds] = time.split(':').map(Number);
@@ -42,9 +67,12 @@ class SubtitleTrack {
   }
 }
 
+/**
+ * Main class for managing dual subtitle playback and synchronization
+ */
 class DualSubtitlePlayer {
-  isPlaying = false;
-  syncEnabled = true;
+  isPlaying = false;      // Playback state
+  syncEnabled = true;     // Whether tracks should stay synchronized
   tracks = {
     primary: new SubtitleTrack('white'),
     secondary: new SubtitleTrack('yellow')
@@ -54,6 +82,9 @@ class DualSubtitlePlayer {
     this.setupMessageListener();
   }
 
+  /**
+   * Sets up Chrome extension message listener for subtitle loading
+   */
   setupMessageListener() {
     chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       if (message.action === 'createSubtitleOverlay') {
@@ -65,12 +96,16 @@ class DualSubtitlePlayer {
     });
   }
 
+  /**
+   * Creates and initializes the subtitle overlay UI
+   */
   async initializeOverlay() {
     if (!this.overlay) {
+      // Create main overlay container
       this.overlay = document.createElement('div');
       this.overlay.className = 'subtitle-overlay';
       
-      // Create subtitle text containers
+      // Create subtitle text containers for each track
       for (const [key, track] of Object.entries(this.tracks)) {
         const textContainer = document.createElement('div');
         textContainer.className = `subtitle-text ${key}`;
@@ -78,16 +113,17 @@ class DualSubtitlePlayer {
         this.overlay.appendChild(textContainer);
       }
 
-      // Create controls for each track
+      // Create control panel wrapper
       const controlsWrapper = document.createElement('div');
       controlsWrapper.className = 'controls-wrapper';
       
+      // Add track-specific controls
       for (const [key, track] of Object.entries(this.tracks)) {
         const controls = this.createTrackControls(key);
         controlsWrapper.appendChild(controls);
       }
 
-      // Add sync toggle
+      // Create sync toggle button
       const syncToggle = document.createElement('button');
       syncToggle.className = 'sync-toggle';
       syncToggle.textContent = 'Sync: On';
@@ -96,9 +132,11 @@ class DualSubtitlePlayer {
         syncToggle.textContent = `Sync: ${this.syncEnabled ? 'On' : 'Off'}`;
       });
 
+      // Create master control panel
       const masterControls = document.createElement('div');
       masterControls.className = 'master-controls';
       
+      // Add play/pause button
       this.playPauseButton = document.createElement('button');
       this.playPauseButton.className = 'subtitle-button';
       this.playPauseButton.textContent = 'Play';
@@ -112,11 +150,17 @@ class DualSubtitlePlayer {
     }
   }
 
+  /**
+   * Creates control elements for a subtitle track
+   * @param {string} trackKey - Key identifying the track (primary/secondary)
+   * @returns {HTMLElement} Container with track controls
+   */
   createTrackControls(trackKey) {
     const track = this.tracks[trackKey];
     const container = document.createElement('div');
     container.className = 'track-controls';
     
+    // Create progress slider
     const progressBar = document.createElement('input');
     Object.assign(progressBar, {
       type: 'range',
@@ -126,6 +170,7 @@ class DualSubtitlePlayer {
       value: '0'
     });
 
+    // Handle progress bar input
     progressBar.addEventListener('input', (e) => {
       const newTime = parseInt(e.target.value);
       if (this.syncEnabled) {
@@ -136,6 +181,7 @@ class DualSubtitlePlayer {
       this.updateDisplay();
     });
 
+    // Create time display/input field
     const timeDisplay = document.createElement('input');
     Object.assign(timeDisplay, {
       type: 'text',
@@ -143,6 +189,7 @@ class DualSubtitlePlayer {
       value: '00:00:00 / 00:00:00'
     });
 
+    // Handle manual time input
     timeDisplay.addEventListener('change', (e) => {
       const newTime = this.parseTimeInput(e.target.value);
       if (newTime !== null) {
@@ -159,6 +206,11 @@ class DualSubtitlePlayer {
     return container;
   }
 
+  /**
+   * Updates time for all tracks while maintaining relative offset
+   * @param {number} newTime - New time in milliseconds
+   * @param {string} sourceTrack - Key of track initiating the change
+   */
   setAllTracksTime(newTime, sourceTrack) {
     const sourceOffset = this.tracks[sourceTrack].timeOffset;
     for (const [key, track] of Object.entries(this.tracks)) {
@@ -170,12 +222,18 @@ class DualSubtitlePlayer {
     }
   }
 
+  /**
+   * Loads subtitle content into specified track
+   * @param {string} content - SRT content
+   * @param {boolean} isSecondary - Whether to load into secondary track
+   */
   loadSubtitles(content, isSecondary = false) {
     const track = isSecondary ? this.tracks.secondary : this.tracks.primary;
     track.loadSubtitles(content);
     this.updateDisplay();
   }
 
+  // Playback control methods
   togglePlayPause() {
     this.isPlaying ? this.pause() : this.play();
   }
@@ -194,6 +252,9 @@ class DualSubtitlePlayer {
     }
   }
 
+  /**
+   * Starts the playback timer using requestAnimationFrame
+   */
   startTimer() {
     let lastTime = performance.now();
     
@@ -213,29 +274,41 @@ class DualSubtitlePlayer {
     this.animationFrameId = requestAnimationFrame(updateFrame);
   }
 
+  /**
+   * Updates all UI elements to reflect current state
+   * Updates subtitle text, progress bars, and time displays for both tracks
+   */
   updateDisplay() {
-    // Update subtitle text
+    // Update subtitle text displays
     for (const [key, track] of Object.entries(this.tracks)) {
       const textContainer = this.overlay.querySelector(`.subtitle-text.${key}`);
       const currentSub = track.getCurrentSubtitle();
       textContainer.textContent = currentSub ? currentSub.text : '';
     }
 
-    // Update progress bars and time displays
+    // Update progress bars and time displays for each track
     const controls = this.overlay.querySelectorAll('.track-controls');
     Object.entries(this.tracks).forEach(([key, track], index) => {
       const progressBar = controls[index].querySelector('.progress-bar');
       const timeDisplay = controls[index].querySelector('.time-display');
       
+      // Update progress bar max value and current position
       progressBar.max = track.duration;
       progressBar.value = track.currentTimeMs;
       
+      // Only update time display if it's not being edited
       if (document.activeElement !== timeDisplay) {
         timeDisplay.value = this.formatTimeDisplay(track.currentTimeMs, track.duration);
       }
     });
   }
 
+  /**
+   * Formats time values into human-readable string
+   * @param {number} current - Current time in milliseconds
+   * @param {number} total - Total duration in milliseconds
+   * @returns {string} Formatted time string "HH:MM:SS / HH:MM:SS"
+   */
   formatTimeDisplay(current, total) {
     const format = (ms) => {
       const s = Math.floor(ms / 1000);
@@ -246,6 +319,11 @@ class DualSubtitlePlayer {
     return `${format(current)} / ${format(total)}`;
   }
 
+  /**
+   * Parses user-input time string into milliseconds
+   * @param {string} timeStr - Time string in format "HH:MM:SS / HH:MM:SS"
+   * @returns {number|null} Time in milliseconds, or null if invalid format
+   */
   parseTimeInput(timeStr) {
     try {
       const timePart = timeStr.split('/')[0].trim();
@@ -258,4 +336,5 @@ class DualSubtitlePlayer {
   }
 }
 
+// Create single instance of DualSubtitlePlayer when script loads
 const player = new DualSubtitlePlayer();
