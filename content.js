@@ -148,10 +148,18 @@ class SubtitlePlayer {
 
   parseSRT(content) {
     try {
-      const blocks = content.trim().split('\n\n');
+      // Split blocks by two or more consecutive line breaks, allowing for different whitespace
+      const blocks = content.trim().split(/\r?\n\r?\n+/);
+      
       return blocks.map(block => {
-        const [, timecode, ...textLines] = block.split('\n');
+        // Split the block into lines, preserving original line breaks
+        const lines = block.split(/\r?\n/);
+        
+        // First line is the subtitle number
+        const [index, timecode, ...textLines] = lines;
+        
         const [startTime, endTime] = timecode.split(' --> ');
+        
         return {
           start: this.timeToMs(startTime),
           end: this.timeToMs(endTime),
