@@ -1,0 +1,58 @@
+{
+    "extName": {
+        "message": "Dual Subtitle Overlay",
+        "description": "Extension name"
+    },
+    "extDescription": {
+        "message": "Add dual SRT subtitles to any webpage with independent timing controls. Perfect for language learning & watching content with bilingual subtitles.",
+        "description": "Extension description - English"
+    },
+    "extTitle": {
+        "message": "Custom Subtitles",
+        "description": "Toolbar hover title"
+    },
+    "play": {
+        "message": "Play",
+        "description": "Play button text"
+    },
+    "pause": {
+        "message": "Pause",
+        "description": "Pause button text"
+    },
+    "syncOn": {
+        "message": "Sync: On",
+        "description": "Sync enabled status"
+    },
+    "syncOff": {
+        "message": "Sync: Off",
+        "description": "Sync disabled status"
+    },
+    "dropPrimaryFile": {
+        "message": "Drop primary SRT file here",
+        "description": "Instructions for primary subtitle file upload"
+    },
+    "dropSecondaryFile": {
+        "message": "Drop secondary SRT file here (optional)",
+        "description": "Instructions for secondary subtitle file upload"
+    },
+    "errorInvalidFile": {
+        "message": "Please upload a valid .srt file",
+        "description": "Error message for invalid file type"
+    },
+    "errorLoading": {
+        "message": "Error loading subtitles",
+        "description": "Error message when subtitle loading fails"
+    },
+    "statusFileLoaded": {
+        "message": "Loaded $1: $2",
+        "description": "Status message when file is loaded. $1 is primary/secondary, $2 is filename"
+    },
+    "primary": {
+        "message": "primary",
+        "description": "Label for primary subtitle track"
+    },
+    "secondary": {
+        "message": "secondary",
+        "description": "Label for secondary subtitle track"
+    }
+}

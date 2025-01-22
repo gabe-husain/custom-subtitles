@@ -1,0 +1,58 @@
+{
+    "extName": {
+        "message": "双字幕叠加器",
+        "description": "Extension name - Chinese"
+    },
+    "extDescription": {
+        "message": "为任何网页添加双语字幕，支持独立时间控制。非常适合语言学习和观看双语字幕内容。",
+        "description": "Extension description - Chinese"
+    },
+    "extTitle": {
+        "message": "自定义字幕",
+        "description": "Toolbar hover title - Chinese"
+    },
+    "play": {
+        "message": "播放",
+        "description": "Play button text"
+    },
+    "pause": {
+        "message": "暂停",
+        "description": "Pause button text"
+    },
+    "syncOn": {
+        "message": "同步：开启",
+        "description": "Sync enabled status"
+    },
+    "syncOff": {
+        "message": "同步：关闭",
+        "description": "Sync disabled status"
+    },
+    "dropPrimaryFile": {
+        "message": "在此处放置主字幕文件",
+        "description": "Instructions for primary subtitle file upload"
+    },
+    "dropSecondaryFile": {
+        "message": "在此处放置次要字幕文件（可选）",
+        "description": "Instructions for secondary subtitle file upload"
+    },
+    "errorInvalidFile": {
+        "message": "请上传有效的.srt文件",
+        "description": "Error message for invalid file type"
+    },
+    "errorLoading": {
+        "message": "加载字幕时出错",
+        "description": "Error message when subtitle loading fails"
+    },
+    "statusFileLoaded": {
+        "message": "已加载$1：$2",
+        "description": "Status message when file is loaded"
+    },
+    "primary": {
+        "message": "主要",
+        "description": "Label for primary subtitle track"
+    },
+    "secondary": {
+        "message": "次要",
+        "description": "Label for secondary subtitle track"
+    }
+}

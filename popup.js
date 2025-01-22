@@ -1,95 +1,88 @@
-// Main entry point for the Chrome extension popup interface
 document.addEventListener('DOMContentLoaded', function() {
-    // Object containing references to the drop zones for both primary and secondary subtitles
+    // Initialize i18n text content
+    document.getElementById('primaryDropText').textContent = 
+        chrome.i18n.getMessage('dropPrimaryFile');
+    document.getElementById('secondaryDropText').textContent = 
+        chrome.i18n.getMessage('dropSecondaryFile');
+    
     const dropZones = {
-      primary: document.getElementById('primaryDropZone'),
-      secondary: document.getElementById('secondaryDropZone')
+        primary: document.getElementById('primaryDropZone'),
+        secondary: document.getElementById('secondaryDropZone')
     };
     
-    // Object containing references to the hidden file inputs for both subtitle tracks
     const fileInputs = {
-      primary: document.getElementById('primaryFileInput'),
-      secondary: document.getElementById('secondaryFileInput')
+        primary: document.getElementById('primaryFileInput'),
+        secondary: document.getElementById('secondaryFileInput')
     };
     
-    // Reference to status display element that shows feedback to the user
     const status = document.getElementById('status');
-  
-    // Set up drag and drop functionality for both primary and secondary zones
+
     Object.entries(dropZones).forEach(([key, zone]) => {
-      const input = fileInputs[key];
-      
-      // Enable clicking on drop zone to trigger file input
-      zone.addEventListener('click', () => input.click());
-      
-      // Handle file selection through the traditional file input
-      input.addEventListener('change', (e) => {
-        handleFile(e.target.files[0], key === 'secondary');
-      });
-  
-      // Handle dragover event to show visual feedback
-      zone.addEventListener('dragover', (e) => {
-        e.preventDefault();  // Prevent default to allow drop
-        e.stopPropagation();
-        zone.classList.add('dragover');  // Add visual feedback class
-      });
-  
-      // Remove visual feedback when drag leaves the zone
-      zone.addEventListener('dragleave', () => {
-        zone.classList.remove('dragover');
-      });
-  
-      // Handle actual file drop
-      zone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        zone.classList.remove('dragover');
+        const input = fileInputs[key];
         
-        const file = e.dataTransfer.files[0];
-        // Only process .srt files
-        if (file && file.name.endsWith('.srt')) {
-          handleFile(file, key === 'secondary');
-        }
-      });
-    });
-  
-    /**
-     * Handles the processing of an uploaded SRT file
-     * @param {File} file - The SRT file to process
-     * @param {boolean} isSecondary - Whether this is the secondary subtitle track
-     */
-    function handleFile(file, isSecondary) {
-      const reader = new FileReader();
-      
-      // Set up file reader completion handler
-      reader.onload = (e) => {
-        const content = e.target.result;
+        zone.addEventListener('click', () => input.click());
         
-        // Find the active tab and send message to content script
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-          chrome.tabs.sendMessage(
-            tabs[0].id, 
-            {
-              action: 'createSubtitleOverlay',
-              srtContent: content,
-              isSecondary
-            },
-            // Handle response from content script
-            function(response) {
-              if (response && response.success) {
-                // Update status and store subtitle content in local storage
-                status.textContent = `Loaded ${isSecondary ? 'secondary' : 'primary'}: ${file.name}`;
-                const storageKey = isSecondary ? 'secondarySRT' : 'primarySRT';
-                chrome.storage.local.set({ [storageKey]: content });
-              } else {
-                status.textContent = 'Error loading subtitles';
-              }
-            }
-          );
+        input.addEventListener('change', (e) => {
+            handleFile(e.target.files[0], key === 'secondary');
         });
-      };
-      
-      // Start reading the file as text
-      reader.readAsText(file);
+
+        zone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            zone.classList.add('dragover');
+        });
+
+        zone.addEventListener('dragleave', () => {
+            zone.classList.remove('dragover');
+        });
+
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            zone.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.srt')) {
+                handleFile(file, key === 'secondary');
+            } else {
+                status.textContent = chrome.i18n.getMessage('errorInvalidFile');
+            }
+        });
+    });
+
+    function handleFile(file, isSecondary) {
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            const content = e.target.result;
+            
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(
+                    tabs[0].id, 
+                    {
+                        action: 'createSubtitleOverlay',
+                        srtContent: content,
+                        isSecondary
+                    },
+                    function(response) {
+                        if (response && response.success) {
+                            status.textContent = chrome.i18n.getMessage(
+                                'statusFileLoaded',
+                                [isSecondary ? 
+                                    chrome.i18n.getMessage('secondary') : 
+                                    chrome.i18n.getMessage('primary'),
+                                file.name]
+                            );
+                            const storageKey = isSecondary ? 'secondarySRT' : 'primarySRT';
+                            chrome.storage.local.set({ [storageKey]: content });
+                        } else {
+                            status.textContent = chrome.i18n.getMessage('errorLoading');
+                        }
+                    }
+                );
+            });
+        };
+        
+        reader.readAsText(file);
     }
 });

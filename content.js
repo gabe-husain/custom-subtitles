@@ -101,11 +101,10 @@ class DualSubtitlePlayer {
    */
   async initializeOverlay() {
     if (!this.overlay) {
-      // Create main overlay container
       this.overlay = document.createElement('div');
       this.overlay.className = 'subtitle-overlay';
       
-      // Create subtitle text containers for each track
+      // Create subtitle text containers
       for (const [key, track] of Object.entries(this.tracks)) {
         const textContainer = document.createElement('div');
         textContainer.className = `subtitle-text ${key}`;
@@ -113,33 +112,31 @@ class DualSubtitlePlayer {
         this.overlay.appendChild(textContainer);
       }
 
-      // Create control panel wrapper
       const controlsWrapper = document.createElement('div');
       controlsWrapper.className = 'controls-wrapper';
       
-      // Add track-specific controls
       for (const [key, track] of Object.entries(this.tracks)) {
         const controls = this.createTrackControls(key);
         controlsWrapper.appendChild(controls);
       }
 
-      // Create sync toggle button
+      // Create sync toggle button with i18n
       const syncToggle = document.createElement('button');
       syncToggle.className = 'sync-toggle';
-      syncToggle.textContent = 'Sync: On';
+      syncToggle.textContent = chrome.i18n.getMessage('syncOn');
       syncToggle.addEventListener('click', () => {
         this.syncEnabled = !this.syncEnabled;
-        syncToggle.textContent = `Sync: ${this.syncEnabled ? 'On' : 'Off'}`;
+        syncToggle.textContent = this.syncEnabled ? 
+          chrome.i18n.getMessage('syncOn') : 
+          chrome.i18n.getMessage('syncOff');
       });
 
-      // Create master control panel
       const masterControls = document.createElement('div');
       masterControls.className = 'master-controls';
       
-      // Add play/pause button
       this.playPauseButton = document.createElement('button');
       this.playPauseButton.className = 'subtitle-button';
-      this.playPauseButton.textContent = 'Play';
+      this.playPauseButton.textContent = chrome.i18n.getMessage('play');
       this.playPauseButton.addEventListener('click', () => this.togglePlayPause());
       
       masterControls.append(this.playPauseButton, syncToggle);
@@ -240,13 +237,13 @@ class DualSubtitlePlayer {
 
   play() {
     this.isPlaying = true;
-    this.playPauseButton.textContent = 'Pause';
+    this.playPauseButton.textContent = chrome.i18n.getMessage('pause');
     this.startTimer();
   }
 
   pause() {
     this.isPlaying = false;
-    this.playPauseButton.textContent = 'Play';
+    this.playPauseButton.textContent = chrome.i18n.getMessage('play');
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
     }

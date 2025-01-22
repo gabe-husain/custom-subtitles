@@ -1,0 +1,58 @@
+{
+    "extName": {
+        "message": "Duale Untertitel-Overlay",
+        "description": "Extension name - German"
+    },
+    "extDescription": {
+        "message": "Fügen Sie duale SRT-Untertitel zu jeder Webseite mit unabhängiger Zeitsteuerung hinzu. Perfekt zum Sprachenlernen.",
+        "description": "Extension description - German"
+    },
+    "extTitle": {
+        "message": "Benutzerdefinierte Untertitel",
+        "description": "Toolbar hover title - German"
+    },
+    "play": {
+        "message": "Abspielen",
+        "description": "Play button text"
+    },
+    "pause": {
+        "message": "Pause",
+        "description": "Pause button text"
+    },
+    "syncOn": {
+        "message": "Synchronisation: An",
+        "description": "Sync enabled status"
+    },
+    "syncOff": {
+        "message": "Synchronisation: Aus",
+        "description": "Sync disabled status"
+    },
+    "dropPrimaryFile": {
+        "message": "Primäre SRT-Datei hier ablegen",
+        "description": "Instructions for primary subtitle file upload"
+    },
+    "dropSecondaryFile": {
+        "message": "Sekundäre SRT-Datei hier ablegen (optional)",
+        "description": "Instructions for secondary subtitle file upload"
+    },
+    "errorInvalidFile": {
+        "message": "Bitte laden Sie eine gültige .srt-Datei hoch",
+        "description": "Error message for invalid file type"
+    },
+    "errorLoading": {
+        "message": "Fehler beim Laden der Untertitel",
+        "description": "Error message when subtitle loading fails"
+    },
+    "statusFileLoaded": {
+        "message": "$1 geladen: $2",
+        "description": "Status message when file is loaded"
+    },
+    "primary": {
+        "message": "Primär",
+        "description": "Label for primary subtitle track"
+    },
+    "secondary": {
+        "message": "Sekundär",
+        "description": "Label for secondary subtitle track"
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "extName": {
+        "message": "Sovrapposizione Doppi Sottotitoli",
+        "description": "Extension name - Italian"
+    },
+    "extDescription": {
+        "message": "Aggiungi sottotitoli SRT doppi a qualsiasi pagina con controlli di temporizzazione indipendenti. Ideale per l'apprendimento linguistico.",
+        "description": "Extension description - Italian"
+    },
+    "extTitle": {
+        "message": "Sottotitoli Personalizzati",
+        "description": "Toolbar hover title - Italian"
+    },
+    "play": {
+        "message": "Riproduci",
+        "description": "Play button text"
+    },
+    "pause": {
+        "message": "Pausa",
+        "description": "Pause button text"
+    },
+    "syncOn": {
+        "message": "Sincronizzazione: Attiva",
+        "description": "Sync enabled status"
+    },
+    "syncOff": {
+        "message": "Sincronizzazione: Disattiva",
+        "description": "Sync disabled status"
+    },
+    "dropPrimaryFile": {
+        "message": "Trascina qui il file SRT principale",
+        "description": "Instructions for primary subtitle file upload"
+    },
+    "dropSecondaryFile": {
+        "message": "Trascina qui il file SRT secondario (opzionale)",
+        "description": "Instructions for secondary subtitle file upload"
+    },
+    "errorInvalidFile": {
+        "message": "Carica un file .srt valido",
+        "description": "Error message for invalid file type"
+    },
+    "errorLoading": {
+        "message": "Errore durante il caricamento dei sottotitoli",
+        "description": "Error message when subtitle loading fails"
+    },
+    "statusFileLoaded": {
+        "message": "Caricato $1: $2",
+        "description": "Status message when file is loaded"
+    },
+    "primary": {
+        "message": "principale",
+        "description": "Label for primary subtitle track"
+    },
+    "secondary": {
+        "message": "secondario",
+        "description": "Label for secondary subtitle track"
+    }
+}

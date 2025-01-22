@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="icon48.png"
+   inkscape:export-xdpi="36"
+   inkscape:export-ydpi="36"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   sodipodi:docname="icon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="3.4599093"
+     inkscape:cx="53.903147"
+     inkscape:cy="64.019019"
+     inkscape:window-width="1472"
+     inkscape:window-height="822"
+     inkscape:window-x="0"
+     inkscape:window-y="37"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer3" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Layer 3">
+    <rect
+       style="fill:#ffffff;fill-opacity:0.47692308;stroke:#000000;stroke-opacity:1"
+       id="rect5"
+       width="122.54656"
+       height="122.54656"
+       x="2.5437276"
+       y="2.7317443"
+       ry="8.3817225" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2">
+    <text
+       xml:space="preserve"
+       style="font-size:107.6px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#209cff;fill-opacity:1;stroke-width:0.3755"
+       x="44.067436"
+       y="85.195488"
+       id="text1"
+       transform="scale(1.0291883,0.97163952)"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:107.6px;font-family:'Arial Hebrew Scholar';-inkscape-font-specification:'Arial Hebrew Scholar';fill:#209cff;fill-opacity:1;stroke-width:0.3755"
+         x="44.067436"
+         y="85.195488">A</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:95.927px;font-family:'Arial Rounded MT Bold';-inkscape-font-specification:'Arial Rounded MT Bold, ';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffc520;fill-opacity:1;stroke-width:0.334763"
+       x="2.3451834"
+       y="113.76847"
+       id="text2"
+       transform="scale(1.0013015,0.99870021)"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="fill:#ffc520;fill-opacity:1;stroke-width:0.334763"
+         x="2.3451834"
+         y="113.76847">好</tspan></text>
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.264324;stroke-opacity:1"
+       id="rect4"
+       width="39.640427"
+       height="22.879021"
+       x="81.793449"
+       y="97.654305"
+       ry="8.5063028" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24.2938px;font-family:'Arial Hebrew Scholar';-inkscape-font-specification:'Arial Hebrew Scholar';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:0.264583"
+       x="78.839928"
+       y="125.22381"
+       id="text4"
+       transform="scale(1.0900079,0.91742458)"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Arial Rounded MT Bold';-inkscape-font-specification:'Arial Rounded MT Bold, ';fill:#000000;fill-opacity:1;stroke-width:0.264583"
+         x="78.839928"
+         y="125.22381">cc</tspan></text>
+  </g>
+</svg>
