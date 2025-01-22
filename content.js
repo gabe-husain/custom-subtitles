@@ -79,7 +79,7 @@ class DualSubtitlePlayer {
   };
   
   constructor() {
-    this.setupMessageListener();
+    this.overlay = null; // Initialize overlay as null
   }
 
   /**
@@ -224,7 +224,12 @@ class DualSubtitlePlayer {
    * @param {string} content - SRT content
    * @param {boolean} isSecondary - Whether to load into secondary track
    */
-  loadSubtitles(content, isSecondary = false) {
+  async loadSubtitles(content, isSecondary = false) {
+    // Ensure overlay is initialized first
+    if (!this.overlay) {
+      await this.initializeOverlay();
+    }
+    
     const track = isSecondary ? this.tracks.secondary : this.tracks.primary;
     track.loadSubtitles(content);
     this.updateDisplay();
@@ -333,5 +338,32 @@ class DualSubtitlePlayer {
   }
 }
 
-// Create single instance of DualSubtitlePlayer when script loads
-const player = new DualSubtitlePlayer();
+// Wait for the message from popup:
+let player = null;
+
+// Initialize message listeners with proper async handling
+async function initializePlayer() {
+    if (!player) {
+        player = new DualSubtitlePlayer();
+        await player.initializeOverlay(); // Ensure overlay is created
+    }
+    return player;
+}
+
+// Modified message listener with proper async/await
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'createSubtitleOverlay') {
+        (async () => {
+            try {
+                const currentPlayer = await initializePlayer();
+                await currentPlayer.loadSubtitles(message.srtContent, message.isSecondary);
+                sendResponse({ success: true });
+            } catch (error) {
+                console.error('Subtitle loading error:', error);
+                sendResponse({ success: false, error: error.message });
+            }
+        })();
+        return true; // Keep the message channel open
+    }
+    return true;
+});
